@@ -109,16 +109,28 @@
 
 @push('scripts')
 <script>
-    const inputs = ['b1','b2','b3','b4'].map(id => document.getElementById(id));
-    const preview = document.getElementById('previewMedia');
+    const inputs     = ['b1','b2','b3','b4'].map(id => document.getElementById(id));
+    const preview    = document.getElementById('previewMedia');
     const mediaValor = document.getElementById('mediaValor');
+
+    // Mesma regra do PHP: >9=A, >7=B, >4=C, demais=D
+    function calcularConceito(media) {
+        if (media > 9) return { letra: 'A', cor: 'success',  msg: 'Aprovado com Louvor' };
+        if (media > 7) return { letra: 'B', cor: 'primary',  msg: 'Aluno Aprovado' };
+        if (media > 4) return { letra: 'C', cor: 'warning',  msg: 'Recuperação, sua chance de passar' };
+        return          { letra: 'D', cor: 'danger',   msg: 'Poxa vida, vamos tentar novamente ano que vem' };
+    }
 
     function calcularPreview() {
         const vals = inputs.map(i => parseFloat(i.value));
         const todos = vals.every(v => !isNaN(v));
         if (todos) {
-            const media = vals.reduce((a, b) => a + b, 0) / 4;
-            mediaValor.textContent = media.toFixed(2);
+            const media   = vals.reduce((a, b) => a + b, 0) / 4;
+            const conceito = calcularConceito(media);
+            mediaValor.innerHTML =
+                `<span class="text-${conceito.cor}">${media.toFixed(2)}</span>
+                 <span class="badge bg-${conceito.cor} ms-2">${conceito.letra}</span>
+                 <small class="d-block text-${conceito.cor} mt-1" style="font-size:.85rem">${conceito.msg}</small>`;
             preview.style.display = 'flex';
         } else {
             preview.style.display = 'none';

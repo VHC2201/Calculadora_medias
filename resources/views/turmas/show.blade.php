@@ -64,11 +64,29 @@
 
 {{-- Stats --}}
 @php
-    $total    = $alunos->count();
-    $comNotas = $alunos->filter(fn($a) => $a->nota)->count();
-    $aprovados = $alunos->filter(fn($a) => $a->nota && in_array($a->nota->conceito, ['A','B']))->count();
-    $recuperacao = $alunos->filter(fn($a) => $a->nota && $a->nota->conceito === 'C')->count();
-    $reprovados = $alunos->filter(fn($a) => $a->nota && $a->nota->conceito === 'D')->count();
+    $total       = $alunos->count();
+    $comNotas    = $alunos->filter(fn($a) => $a->nota)->count();
+
+    // Aprovados = conceito A ou B  +  conceito C com aprovado_recuperacao = true
+    $aprovados   = $alunos->filter(fn($a) =>
+        $a->nota && (
+            in_array($a->nota->conceito, ['A','B']) ||
+            ($a->nota->conceito === 'C' && $a->nota->aprovado_recuperacao === true)
+        )
+    )->count();
+
+    // Em recuperação = conceito C que ainda NÃO fez a prova de recuperação
+    $recuperacao = $alunos->filter(fn($a) =>
+        $a->nota && $a->nota->conceito === 'C' && $a->nota->nota_recuperacao === null
+    )->count();
+
+    // Reprovados = conceito D  +  conceito C com aprovado_recuperacao = false
+    $reprovados  = $alunos->filter(fn($a) =>
+        $a->nota && (
+            $a->nota->conceito === 'D' ||
+            ($a->nota->conceito === 'C' && $a->nota->aprovado_recuperacao === false)
+        )
+    )->count();
 @endphp
 
 <div class="row g-3 mb-4">

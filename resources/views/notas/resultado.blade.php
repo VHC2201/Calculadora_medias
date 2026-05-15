@@ -56,6 +56,15 @@
         </div>
 
         {{-- RESULTADO PRINCIPAL --}}
+        @php
+            // Determina o resultado FINAL considerando recuperação
+            $resultadoFinal = match(true) {
+                $nota->conceito === 'C' && $nota->aprovado_recuperacao === true  => 'aprovado_rec',
+                $nota->conceito === 'C' && $nota->aprovado_recuperacao === false => 'reprovado_rec',
+                default => $nota->conceito
+            };
+        @endphp
+
         <div class="resultado-card {{ $nota->conceito }} p-4 mb-4">
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -74,28 +83,72 @@
                         </span>
                     </div>
 
-                    {{-- Ícone da situação --}}
+                    {{-- Situação final (considera resultado da recuperação) --}}
                     <div class="fs-5">
-                        @switch($nota->conceito)
-                            @case('A') <i class="bi bi-trophy-fill text-success me-2"></i><span class="text-success fw-700">Excelente desempenho!</span> @break
-                            @case('B') <i class="bi bi-check-circle-fill text-primary me-2"></i><span class="text-primary fw-700">Bom trabalho!</span> @break
-                            @case('C') <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i><span class="text-warning fw-700">Atenção: recuperação necessária</span> @break
-                            @case('D') <i class="bi bi-x-circle-fill text-danger me-2"></i><span class="text-danger fw-700">Reprovado</span> @break
+                        @switch($resultadoFinal)
+                            @case('A')
+                                <i class="bi bi-trophy-fill text-success me-2"></i>
+                                <span class="text-success fw-700">Excelente desempenho!</span>
+                                @break
+                            @case('B')
+                                <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                                <span class="text-primary fw-700">Bom trabalho!</span>
+                                @break
+                            @case('C')
+                                <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                                <span class="text-warning fw-700">Aguardando nota de recuperação</span>
+                                @break
+                            @case('aprovado_rec')
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-success fw-700">Aprovado na Recuperação!</span>
+                                @break
+                            @case('reprovado_rec')
+                                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                <span class="text-danger fw-700">Reprovado na Recuperação</span>
+                                @break
+                            @case('D')
+                                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                <span class="text-danger fw-700">Poxa vida, vamos tentar novamente ano que vem</span>
+                                @break
                         @endswitch
                     </div>
                 </div>
                 <div class="col-md-4 text-center mt-3 mt-md-0">
                     <div style="font-size:5rem">
-                        @switch($nota->conceito)
-                            @case('A') 🏆 @break
-                            @case('B') ✅ @break
-                            @case('C') ⚠️ @break
-                            @case('D') 😔 @break
+                        @switch($resultadoFinal)
+                            @case('A')            🏆 @break
+                            @case('B')            ✅ @break
+                            @case('C')            ⚠️ @break
+                            @case('aprovado_rec') 🎉 @break
+                            @case('reprovado_rec') 😔 @break
+                            @case('D')            😔 @break
                         @endswitch
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- BANNER DE RESULTADO DA RECUPERAÇÃO (se já realizada) --}}
+        @if($nota->conceito === 'C' && $nota->recuperacaoRealizada())
+        <div class="alert {{ $nota->aprovado_recuperacao ? 'alert-success' : 'alert-danger' }} d-flex align-items-center gap-3 mb-4 p-4" style="border-radius:12px; border-left: 6px solid {{ $nota->aprovado_recuperacao ? '#2dc653' : '#e63946' }}">
+            <div style="font-size:2.5rem">{{ $nota->aprovado_recuperacao ? '🎉' : '❌' }}</div>
+            <div>
+                <div class="fw-800 fs-5">
+                    {{ $nota->aprovado_recuperacao ? 'Aprovado na Recuperação!' : 'Reprovado na Recuperação' }}
+                </div>
+                <div>
+                    Média <strong>{{ number_format($nota->media, 2) }}</strong>
+                    + Recuperação <strong>{{ number_format($nota->nota_recuperacao, 1) }}</strong>
+                    = <strong>{{ number_format($nota->media + $nota->nota_recuperacao, 1) }}</strong>
+                    @if($nota->aprovado_recuperacao)
+                        <span class="badge bg-success ms-1">≥ 10,0 ✓</span>
+                    @else
+                        <span class="badge bg-danger ms-1">&lt; 10,0 ✗</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
 
         {{-- RECUPERAÇÃO --}}
         @if($nota->conceito === 'C')
