@@ -30,7 +30,7 @@
         }
 
         /* ── Navbar ── */
-        .navbar-brand span { color: #a5b4fc; }
+        .navbar-brand span { color: #000; }
         .navbar { background: var(--sidebar-bg) !important; }
         .navbar .nav-link { color: var(--sidebar-text) !important; font-weight: 600; }
         .navbar .nav-link:hover, .navbar .nav-link.active { color: #fff !important; }
@@ -108,7 +108,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
         <a class="navbar-brand fw-800 fs-4" href="{{ route('turmas.index') }}">
-            <i class="bi bi-mortarboard-fill me-2" style="color:#a5b4fc"></i>
+            <i class="bi bi-mortarboard-fill me-2" style="color:#000"></i>
             Unipar<span>Notas</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
