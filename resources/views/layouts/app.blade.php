@@ -19,7 +19,7 @@
             --success:     #2dc653;
             --warning:     #f4a261;
             --danger:      #e63946;
-            --sidebar-bg:  #1a1a2e;
+            --sidebar-bg:  #e63946;
             --sidebar-text:#c0c7e8;
         }
 
@@ -109,7 +109,7 @@
     <div class="container">
         <a class="navbar-brand fw-800 fs-4" href="{{ route('turmas.index') }}">
             <i class="bi bi-mortarboard-fill me-2" style="color:#a5b4fc"></i>
-            Edu<span>Nota</span>
+            Unipar<span>Notas</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
             <span class="navbar-toggler-icon"></span>
@@ -143,7 +143,7 @@
 </div>
 
 <footer class="text-center text-muted py-4" style="font-size:.82rem">
-    EduNota &copy; {{ date('Y') }} — Calculadora de Médias Escolares
+    Desenvolvido por Vinicius Cordeiro &copy; {{ date('Y') }} — Calculadora de Médias Escolares
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
